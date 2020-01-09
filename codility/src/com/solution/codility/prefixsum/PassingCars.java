@@ -1,5 +1,9 @@
 package com.solution.codility.prefixsum;
 
+/**
+ * @Author Mostafa
+ * Lesson https://app.codility.com/programmers/lessons/5-prefix_sums/passing_cars/
+ */
 public class PassingCars {
 
 
