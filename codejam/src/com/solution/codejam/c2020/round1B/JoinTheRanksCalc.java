@@ -24,7 +24,7 @@ public class JoinTheRanksCalc {
 
             System.out.println("Case #"+t+": "+ Math.ceil(((double)(r*s-r))/2.0) );
             //solve(r, s);
-          JoinTheRanks.Card[] cards = JoinTheRanks.generateTheRank(r, s);
+          JoinTheRankNoCalc.Card[] cards = JoinTheRankNoCalc.generateTheRank(r, s);
             solveWithDebug(cards, r, s);
             System.out.println();
             System.out.println("--------------------");
@@ -34,15 +34,15 @@ public class JoinTheRanksCalc {
     }
 
 
-    public static void solve2(JoinTheRanks.Card[] cards, int rs, int ss) {
+    public static void solve2(JoinTheRankNoCalc.Card[] cards, int rs, int ss) {
 
-        JoinTheRanks.printCards(cards);
+        JoinTheRankNoCalc.printCards(cards);
         while (true) {
 
             cards = substitute(cards, rs, ss);
             System.out.println(ss+" "+rs);
 
-            JoinTheRanks.printCards(cards);
+            JoinTheRankNoCalc.printCards(cards);
 
             ss--;
 
@@ -68,9 +68,9 @@ public class JoinTheRanksCalc {
         }
     }
     
-    private static void solveWithDebug(JoinTheRanks.Card[] cards, int rs, int ss) {
+    private static void solveWithDebug(JoinTheRankNoCalc.Card[] cards, int rs, int ss) {
 
-        JoinTheRanks.printCards(cards);
+        JoinTheRankNoCalc.printCards(cards);
 
         // S here represent sorted collection
         for (int s = 1; s < ss; s++) {
@@ -82,17 +82,17 @@ public class JoinTheRanksCalc {
                 System.out.println("Size 1=" + size1);
                 int size21 = s < 2 ? s : 2;
                 cards = substitute(cards, size1, size21);
-                JoinTheRanks.printCards(cards);
+                JoinTheRankNoCalc.printCards(cards);
                 int size22 = (s+1) * (r-1) + s;
                 System.out.println("Size(2) => "+size22 );
                 cards = substitute(cards, size21, size22);
-                JoinTheRanks.printCards(cards);
+                JoinTheRankNoCalc.printCards(cards);
             }
         }
     }
 
-    private static JoinTheRanks.Card[] substitute(JoinTheRanks.Card[] cards, int size1, int size2) {
-        JoinTheRanks.Card[] newCards = new JoinTheRanks.Card[cards.length];
+    private static JoinTheRankNoCalc.Card[] substitute(JoinTheRankNoCalc.Card[] cards, int size1, int size2) {
+        JoinTheRankNoCalc.Card[] newCards = new JoinTheRankNoCalc.Card[cards.length];
 //        if(size2 == 10){
 //            System.out.println("ss");
 //            size2 -=2;
