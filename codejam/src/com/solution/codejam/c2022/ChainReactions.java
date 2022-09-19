@@ -4,9 +4,11 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
@@ -48,149 +50,57 @@ public class ChainReactions {
                 }
             }
 
-            Set<Node> initiators = new HashSet<>();
+            List<Node> initiators = new ArrayList<>();
             for (int i = 0; i < n; i++) {
                 if(nodes[i].prevs.size() == 0) {
                     initiators.add(nodes[i]);
                 }
             }
 
-            reduce(nodesSet);
-
-            long sum = 0;
-            for(Node node : nodesSet) {
-//                System.out.println("node -> "+node.factor);
-                sum += node.factor;
+//            Collections.sort(initiators, Comparator.comparingInt(Node::getFactor));
+//
+//            int result = 0;
+//            for(Node init : initiators) {
+//                int max = getMax(init, Integer.MIN_VALUE);
+//                result += max;
+//            }
+            long total = 0;
+            for(Node node : initiators) {
+                total += node.sumExceptMin();
             }
 
-//
-//            for(Node ini : initiators) {
-//                if(!nodesSet.contains(ini)) {
-//                    sum += ini.factor;
-//                }
-//            }
-
-
-            // Set<Integer> used = new HashSet<>();
-//            long result = 0;
-//            for (int mod : initiators) {
-//                if(nodes[mod].isAbyss && nodes[mod].prevs.size() == 0) {
-//                    result += nodes[mod].factor;
-//                }
-//            }
-//
-//            System.out.println(String.join(", ", initiators.stream().map(i -> i.toString()).collect(Collectors.toList())));
-
-            System.out.println("Case #"+t+": "+ sum );
+            System.out.println("Case #"+t+": "+ total );
 
 
         }
         in.close();
     }
 
-    public static void reduce(Set<Node> nodes) {
-        boolean hasComplexPrevs = false;
-        Set<Node> todelete = new HashSet<>();
-        for(Node node : nodes) {
-            if(node.complexPrevs) {
-                hasComplexPrevs = true;
-            }
-            else {
-                if(node.prevs.size() > 0) {
-                    Node[] mnMx = minMax(node.prevs);
-                    Node min = mnMx[0]; Node max = mnMx[1];
 
-                    if(node.next == null) {
-
-                        if(node.factor > min.factor) {
-                            todelete.add(min);
-                        }
-                        else {
-                            todelete.add(node);
-                        }
-
-                    }
-                    else {
-                        if(node.factor > max.factor) {
-//                            System.out.println("to delete 1 = "+min);
-                            todelete.add(min);
-                        }
-                        else {
-                            if(min.factor < node.factor) {
-                                todelete.add(min);
-//                                System.out.println("to delete 2 = " + min);
-                            }
-                            else {
-                                todelete.add(node);
-//                                System.out.println("to delete 2 = " + node);
-                            }
-
-                            max.next = node.next;
-                            node.next.prevs.remove(node);
-                            node.next.prevs.add(max);
-//                            todelete.addAll(node.prevs.stream().filter(n -> n != min).collect(Collectors.toSet()));
-                        }
-                    }
-
-                    node.prevs.clear();
-
-                }
-            }
-        }
-        nodes.removeAll(todelete);
-        todelete.clear();
-        if(hasComplexPrevs) {
-            reduce(nodes);
-        }
-    }
-
-
-    static Node[] minMax(Set<Node> prevs) {
-        Node min = null;
-        Node max = null;
-        for(Node node : prevs) {
-            if(min == null) {
-                min = node; max=node;
-                continue;
-            }
-            min = node.factor < min.factor ? node : min;
-            max = node.factor > max.factor ? node : max;
-        }
-        return new Node[]{min, max};
-    }
-
-    public static long solve(long result, Node current) {
-        Node largestPrev = current.prevs.stream().findFirst().get();
-        Node active;
-        if(current.factor > largestPrev.factor) {
-           active = current;
-        }
-        else {
-            active = largestPrev;
-        }
-
-        result = active.factor;
-        for (Node prevNode : active.prevs) {
-            prevNode.next = null;
-        }
-        if(active.next != null) {
-            result = solve(result, current.next);
-        }
-
-        return result;
-    }
+//    public static long solve(long result, Node current) {
+//        Node largestPrev = current.prevs.stream().findFirst().get();
+//        Node active;
+//        if(current.factor > largestPrev.factor) {
+//           active = current;
+//        }
+//        else {
+//            active = largestPrev;
+//        }
+//
+//        result = active.factor;
+//        for (Node prevNode : active.prevs) {
+//            prevNode.next = null;
+//        }
+//        if(active.next != null) {
+//            result = solve(result, current.next);
+//        }
+//
+//        return result;
+//    }
 
     //     X -->
     //     Y -->
     //
-    public static long subtree(Node end) {
-        for(Node prev : end.prevs) {
-            if(prev.prevs.size() > 0) {
-
-            }
-        }
-        return -1;
-    }
 
 
     /*
@@ -211,9 +121,54 @@ public class ChainReactions {
 
         public int index;
         public int factor;
-        public Set<Node> prevs = new HashSet<>();
+        public List<Node> prevs = new ArrayList<>();
         public Node next;
         public boolean complexPrevs = false;
+
+        public int getFactor() {
+            return factor;
+        }
+
+        public int sumExceptMin() {
+            int sum = 0;
+            if(next == null) {
+                System.out.println(index+ ", ");
+                sum = factor;
+            }
+
+            if(prevs.size() > 0) {
+                Collections.sort(prevs, Comparator.comparingInt(Node::getFactor));
+                Node max = prevs.get(prevs.size()-1);
+                int min = prevs.get(0).factor;
+                int start = prevs.size() == 1 ? 0 : 1;
+
+                for (int i = start; i < prevs.size(); i++) {
+                    sum += prevs.get(i).factor;
+                    System.out.println(prevs.get(i).index+", ");
+                }
+                if(next != null) {
+                    if(factor < max.factor) {
+                        // factor = max;
+                         System.out.println(" - = "+max);
+                        //sum -= factor;
+                        sum -= max.factor;
+                        factor = max.factor;
+                    }
+                }
+
+
+            }
+
+
+//            for(Node prev : prevs) {
+//                if(prev.factor < min) {
+//                    min = prev.factor;
+//                }
+//                sum += prev.factor;
+//            }
+            return sum;
+        }
+
 
         @Override
         public String toString() {

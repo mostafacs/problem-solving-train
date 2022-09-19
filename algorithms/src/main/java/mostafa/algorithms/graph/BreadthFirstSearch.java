@@ -10,6 +10,17 @@ import java.util.Set;
 public class BreadthFirstSearch {
 
 
+    /*
+
+
+       0                 6
+     /  \                |
+    1    5               9
+    |
+    2
+
+
+    */
     public static void main(String[] args) {
         Graph graph = new Graph(Graph.GraphType.DIRECTED, 10);
         graph.addEdge(0, 1, 10);
