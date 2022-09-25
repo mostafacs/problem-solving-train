@@ -58,7 +58,7 @@ class SurroundRegion {
             else { x = i; y=j+1; }
 
             boolean nvalid = neighbors[n] == 'X';
-            if(!nvalid)) {
+            if(!nvalid) {
                 if(!onBorder(x, y, board.length, board[x].length) )
                 {
                     if ( !(visitedX.contains(x) && visitedY.contains(y)) ) {
