@@ -16,6 +16,7 @@
     </properties>
 
     <modules>
+        <module>algorithms</module>
         <module>codejam</module>
         <module>codility</module>
         <module>leetcode</module>
