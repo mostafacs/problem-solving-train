@@ -33,7 +33,7 @@ public static class ListNode {
         ListNode result = new MergeTwoLists().mergeTwoLists(l1, l2);
         System.out.println("");
     }
-    
+
     public ListNode mergeTwoLists(ListNode list1, ListNode list2) {
 
         if(list1 == null) return list2;
@@ -44,10 +44,15 @@ public static class ListNode {
         ListNode current = list2;
         while ( current != null  ) {
             ListNode next = current.next;
-            if(pointer.val > current.val) {
-                pointer  = list1;
+
+            if(list1.val > current.val) {
+                current.next = list1;
+                list1 = current;
+                pointer = list1;
             }
-            pointer = insert(pointer, current);
+            else {
+                pointer = insert(pointer, current);
+            }
             current = next;
         }
 
@@ -60,34 +65,20 @@ public static class ListNode {
         ListNode prev = null;
         while(current != null) {
             if(current.val > l2.val) {
-
-                if(prev == null) {
-                    ListNode tempCurrent = new ListNode(current.val, current.next);
-                    current.val = l2.val;
-                    current.next = tempCurrent;
-                    l2 = tempCurrent;
-//                    l2.next = current;
-                }
-                else {
-                    prev.next = l2;
-                    l2.next = current;
-                }
-
+                prev.next = l2;
+                l2.next = current;
                 break;
             }
-
             prev = current;
             current = current.next;
         }
 
-
         if(current == null) {
-
             if(prev != l2) {
                 prev.next = l2;
+                l2.next = null;
             }
         }
-
         return l2;
     }
 
