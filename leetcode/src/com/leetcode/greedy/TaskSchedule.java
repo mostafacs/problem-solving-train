@@ -6,41 +6,66 @@ import java.util.*;
  * @Author Mostafa
  * On 10/10/22
  */
-public class TaskSchedule {
+class TaskSchedule {
 
     public static void main(String[] args) {
-       int result = new TaskSchedule().leastInterval(new char[]{'A','A','A','B','B','B'}, 2);
-        System.out.println(result);
+        // System.out.println(leastInterval(new char[]{'A','A','A','A','A','A','B','C','D','E','F','G'}, 2));
+        System.out.println("sss".substring(0, "sss".length()-1));
     }
-    public int leastInterval(char[] tasks, int n) {
-        Map<Character, Integer> map = new HashMap<>();
-        for (int i = 0; i < tasks.length; i++) {
-            map.put(tasks[i], map.getOrDefault(tasks[i], 0) + 1); // map key is TaskName, and value is number of times to be executed.
+
+    class CharCount {
+        Character c;
+        int count;
+    }
+
+    public static int leastInterval(char[] tasks, int n) {
+        // LinkedList<Character> keys = new LinkedList();
+
+        PriorityQueue<Integer> queue = new PriorityQueue<>(Comparator.reverseOrder());
+        {
+            Map<Character, Integer> counts = new TreeMap<>();
+            for(char c : tasks) {
+                if (counts.containsKey(c)) {
+                    counts.put(c, counts.get(c) + 1);
+                } else {
+                    counts.put(c, 1);
+                }
+            }
+            for(int value : counts.values()) {
+                queue.add(value);
+            }
         }
-        PriorityQueue<Map.Entry<Character, Integer>> q = new PriorityQueue<>( //frequency sort
-                (a,b) -> a.getValue() != b.getValue() ? b.getValue() - a.getValue() : a.getKey() - b.getKey());
 
-        q.addAll(map.entrySet());
 
-        int count = 0;
-        while (!q.isEmpty()) {
-            int k = n + 1;
-            List<Map.Entry> tempList = new ArrayList<>();
-            while (k > 0 && !q.isEmpty()) {
-                Map.Entry<Character, Integer> top = q.poll(); // most frequency task
-                top.setValue(top.getValue() - 1); // decrease frequency, meaning it got executed
-                tempList.add(top); // collect task to add back to queue
-                k--;
-                count++; //successfully executed task
+        int result = 0;
+
+
+        while(queue.size() > 0) {
+
+            int cooler = n+1;
+
+            List<Integer> toFill = new ArrayList<>(queue.size());
+            int availableTasksCount = queue.size();
+            for (int i = 0; i < availableTasksCount && cooler > 0; i++) {
+                int current = queue.poll();
+                result++;
+                cooler --;
+                current --;
+                if(current > 0) {
+                    toFill.add(current);
+                }
             }
 
-            for (Map.Entry<Character, Integer> e : tempList) {
-                if (e.getValue() > 0) q.add(e); // add valid tasks
+            queue.addAll(toFill);
+
+            if(queue.isEmpty()) return result;
+
+            if(cooler > 0) {
+                result += cooler;
             }
 
-            if (q.isEmpty()) break;
-            count = count + k; // if k > 0, then it means we need to be idle
         }
-        return count;
+
+        return result;
     }
 }
