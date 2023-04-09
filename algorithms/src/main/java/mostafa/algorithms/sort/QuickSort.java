@@ -1,4 +1,4 @@
-package mostafa.algorithms.search;
+package mostafa.algorithms.sort;
 
 /**
  * @author Mostafa
